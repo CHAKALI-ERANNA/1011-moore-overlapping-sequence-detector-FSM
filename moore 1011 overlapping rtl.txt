@@ -1,0 +1,51 @@
+`timescale 1ns / 1ps
+
+module seq_1011_moore_overlapping_FSM(clk,rst,Din,Dout
+
+    );
+        input clk,rst,Din;
+        output Dout;
+        
+        reg [2:0]cur_state,nxt_state;
+        
+        parameter idle = 3'b000;
+        parameter S1 = 3'b001;
+        parameter S10 = 3'b010;
+        parameter S101 = 3'b011;
+        parameter S1011 = 3'b100;
+     
+        assign Dout = (cur_state == S1011)? 1:0;
+        always@(posedge clk)
+        begin
+            if(!rst)
+                cur_state <= idle;
+            else
+                cur_state <= nxt_state;    
+        end
+        always@(cur_state,Din)
+        begin
+            case(cur_state)
+                idle : if(Din)
+                        nxt_state <= S1;
+                       else
+                        nxt_state <= idle;
+                S1 : if(Din)
+                        nxt_state <= S1;
+                     else
+                        nxt_state <= S10;
+                S10 : if(Din)
+                        nxt_state <= S101;
+                      else
+                        nxt_state <= idle;
+                S101 : if(Din)
+                        nxt_state <= S1011;
+                       else
+                        nxt_state <= S10;
+                S1011 : if(Din)
+                            nxt_state <= S1;
+                        else
+                            nxt_state <= S10;
+                default cur_state <= idle;            
+            endcase
+        end
+endmodule

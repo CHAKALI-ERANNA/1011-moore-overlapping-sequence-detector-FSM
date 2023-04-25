@@ -1,0 +1,56 @@
+`timescale 1ns / 1ps
+
+module seq_1011_moore_ovrlp_TB(
+
+    );
+              reg clk,rst,Din;
+              wire Dout;
+              always #5 clk = ~clk;
+              seq_1011_moore_overlapping_FSM uu(clk,rst,Din,Dout);
+              task initialise;
+              begin
+                  clk = 0;
+                  rst = 1;
+                  Din = 0;
+              end
+              endtask
+              task reset;
+              begin
+                  @(negedge clk)
+                  rst = 0;
+                  @(negedge clk)
+                  rst = 1;
+              end
+              endtask
+              task data(input a);
+              begin
+                  @(posedge clk)
+                  Din = a;
+              end
+              endtask
+              initial begin
+                  initialise;
+                  #5;
+                  reset;
+                  data(1);
+                  data(0);
+                  data(1);
+                  data(1);
+                  data(0);
+                  data(1);
+                  data(1);
+                  data(1);
+                  data(0);
+                  data(0);
+                  data(1);
+                  data(1);
+                  data(0);
+                  data(1);
+                  data(1);
+                  data(1);
+                  data(0);
+                  data(1);
+                  data(0);
+                  #30 $finish();
+              end 
+endmodule
